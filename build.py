@@ -9,6 +9,7 @@ import zipfile
 import urllib.request
 import shutil
 import hashlib
+import html
 import re
 import subprocess
 import argparse
@@ -61,6 +62,32 @@ def get_version():
             if line.startswith("version"):
                 return line.replace("version", "").replace("=", "").replace('"', '').strip()
     return ''
+
+
+def apply_custom_app_display_name():
+    """Set native display metadata from RS_APP_NAME for Flutter builds."""
+    name = os.environ.get("RS_APP_NAME", "").strip()
+    if not name or not (windows or osx):
+        return
+    if len(name) > 64 or any(ord(ch) < 32 or ch in '<>:"/\\|?*' for ch in name):
+        raise ValueError("RS_APP_NAME is too long or contains unsupported characters")
+    if windows:
+        rc_path = Path(REPO_ROOT) / "flutter/windows/runner/Runner.rc"
+        source = rc_path.read_text(encoding="utf-8")
+        for key, value in (("ProductName", name), ("FileDescription", f"{name} Remote Desktop")):
+            pattern = rf'(?m)^(\s*VALUE "{key}", )"[^"]*"( "\\0")$'
+            source, count = re.subn(pattern, lambda m: f'{m.group(1)}"{value}"{m.group(2)}', source, count=1)
+            if count != 1:
+                raise ValueError(f"Cannot set Windows resource field {key}")
+        rc_path.write_text(source, encoding="utf-8")
+    elif osx:
+        plist_path = Path(REPO_ROOT) / "flutter/macos/Runner/Info.plist"
+        source = plist_path.read_text(encoding="utf-8")
+        pattern = r'(<key>CFBundleDisplayName</key>\s*<string>)[^<]*(</string>)'
+        source, count = re.subn(pattern, lambda m: f"{m.group(1)}{html.escape(name)}{m.group(2)}", source, count=1)
+        if count != 1:
+            raise ValueError("Cannot set macOS CFBundleDisplayName")
+        plist_path.write_text(source, encoding="utf-8")
 
 
 def parse_rc_features(feature):
@@ -1014,6 +1041,9 @@ def main():
             feats = ','.join(get_features(args))
         print(feats)
         return
+
+    if args.flutter:
+        apply_custom_app_display_name()
 
     if os.path.exists(exe_path):
         os.unlink(exe_path)
