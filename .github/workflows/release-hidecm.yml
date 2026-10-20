@@ -13,7 +13,6 @@ on:
 
 jobs:
   build-all:
-    if: github.event.repository.private == true
     uses: ./.github/workflows/flutter-build.yml
     secrets: inherit
     with:
