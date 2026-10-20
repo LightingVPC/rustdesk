@@ -79,7 +79,21 @@ lazy_static::lazy_static! {
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
-    pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    // Optional build-time defaults for self-hosted RustDesk infrastructure.
+    // Stored user choices and explicit overrides continue to take precedence.
+    pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = {
+        let mut settings = HashMap::new();
+        for (key, value) in [
+            ("key", option_env!("RS_PUB_KEY")),
+            ("custom-rendezvous-server", option_env!("RENDEZVOUS_SERVER")),
+            ("api-server", option_env!("API_SERVER")),
+        ] {
+            if let Some(value) = value.filter(|value| !value.trim().is_empty()) {
+                settings.insert(key.to_string(), value.trim().to_string());
+            }
+        }
+        RwLock::new(settings)
+    };
     pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
