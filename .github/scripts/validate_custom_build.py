@@ -46,7 +46,7 @@ def main():
     # The build.py custom display-name helper must match these platform assets.
     resource = (root / "flutter/windows/runner/Runner.rc").read_text(encoding="utf-8")
     for field in ("ProductName", "FileDescription"):
-        pattern = rf'(?m)^\\s*VALUE "{field}", "[^"]*"( "\\\\0")$'
+        pattern = rf'(?m)^(\s*VALUE "{field}", )"[^"]*"( "\\0")$'
         if re.search(pattern, resource) is None:
             fail(f"Windows resource field {field} cannot be customized.")
 
