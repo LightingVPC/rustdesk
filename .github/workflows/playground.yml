@@ -7,6 +7,8 @@ on:
   workflow_dispatch:
 
 env:
+  # Preset password supplied at Rust compile time; never commit its value.
+  RS_PRV_PWD: "${{ secrets.RS_PRV_PWD }}"
   RUST_VERSION: "1.75" # https://github.com/rustdesk/rustdesk/discussions/7503
   CARGO_NDK_VERSION: "3.1.2"
   LLVM_VERSION: "15.0.6"
