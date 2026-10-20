@@ -33,6 +33,13 @@ fn build_manifest() {
                 winapi::um::winnt::SUBLANG_ENGLISH_US,
             ))
             .set_manifest_file("res/manifest.xml");
+        if let Ok(app_name) = std::env::var("RS_APP_NAME") {
+            let app_name = app_name.trim();
+            if !app_name.is_empty() {
+                res.set("ProductName", app_name);
+                res.set("FileDescription", &format!("{} Remote Desktop", app_name));
+            }
+        }
         match res.compile() {
             Err(e) => {
                 write!(std::io::stderr(), "{}", e).unwrap();
@@ -101,5 +108,6 @@ fn main() {
     if target_os == "android" {
         build_android_ifaddrs();
     }
+    println!("cargo:rerun-if-env-changed=RS_APP_NAME");
     println!("cargo:rerun-if-changed=build.rs");
 }
