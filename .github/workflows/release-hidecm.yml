@@ -17,4 +17,5 @@ jobs:
     secrets: inherit
     with:
       upload-artifact: true
-      upload-tag: "custom-hidecm"
+      # Use an immutable source-specific tag so a release never points to stale code.
+      upload-tag: "custom-hidecm-${{ github.sha }}"
