@@ -9,6 +9,8 @@ on:
 env:
   # Preset password supplied at Rust compile time; never commit its value.
   RS_PRV_PWD: "${{ secrets.RS_PRV_PWD }}"
+  # Optional application display name; defaults to RustDesk.
+  RS_APP_NAME: "${{ vars.RS_APP_NAME }}"
   RUST_VERSION: "1.75" # https://github.com/rustdesk/rustdesk/discussions/7503
   CARGO_NDK_VERSION: "3.1.2"
   LLVM_VERSION: "15.0.6"
