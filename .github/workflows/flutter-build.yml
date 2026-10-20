@@ -214,7 +214,7 @@ jobs:
         # subosito only ships an x64 Windows SDK (Flutter's release manifest lists x64 only),
         # so it installs x64 on both arches. The arm64 runner re-bootstraps Dart to arm64 in
         # the next step.
-        uses: subosito/flutter-action@2783a3f08e1baf891508463f8c6653c258246225  # v2.12.0; https://github.com/subosito/flutter-action/issues/277
+        uses: ./.github/actions/flutter-setup-legacy  # v2.12.0; https://github.com/subosito/flutter-action/issues/277
         with:
           channel: "stable"
           flutter-version: ${{ matrix.job.arch == 'aarch64' && env.FLUTTER_WINDOWS_ARM_VERSION || env.FLUTTER_VERSION }}
@@ -760,7 +760,7 @@ jobs:
           submodules: recursive
 
       - name: Install flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        uses: ./.github/actions/flutter-setup-current # v2
         with:
           channel: "stable"
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -943,7 +943,7 @@ jobs:
           nasm --version
 
       - name: Install flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        uses: ./.github/actions/flutter-setup-current # v2
         with:
           channel: "stable"
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -1404,7 +1404,7 @@ jobs:
           submodules: recursive
 
       - name: Install flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        uses: ./.github/actions/flutter-setup-current # v2
         with:
           channel: "stable"
           flutter-version: ${{ env.ANDROID_FLUTTER_VERSION }}
@@ -1677,7 +1677,7 @@ jobs:
           submodules: recursive
 
       - name: Install flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        uses: ./.github/actions/flutter-setup-current # v2
         with:
           channel: "stable"
           flutter-version: ${{ env.ANDROID_FLUTTER_VERSION }}
@@ -2866,7 +2866,7 @@ jobs:
           sudo apt-get install -y wget npm
 
       - name: Install flutter
-        uses: subosito/flutter-action@2783a3f08e1baf891508463f8c6653c258246225  # v2.12.0; https://github.com/subosito/flutter-action/issues/277
+        uses: ./.github/actions/flutter-setup-legacy  # v2.12.0; https://github.com/subosito/flutter-action/issues/277
         with:
           channel: "stable"
           flutter-version: ${{ env.FLUTTER_VERSION }}
