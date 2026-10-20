@@ -183,7 +183,7 @@ class _PeerCardState extends State<_PeerCard>
                   child: Column(
                     children: [
                       Row(children: [
-                        getOnline(isPortrait ? 4 : 8, peer.online),
+                        getOnlineLabel(peer.online),
                         Expanded(
                             child: Text(
                           peer.alias.isEmpty ? formatID(peer.id) : peer.alias,
@@ -365,7 +365,7 @@ class _PeerCardState extends State<_PeerCard>
                     children: [
                       Expanded(
                           child: Row(children: [
-                        getOnline(8, peer.online),
+                        getOnlineLabel(peer.online),
                         Expanded(
                             child: Text(
                           peer.alias.isEmpty ? formatID(peer.id) : peer.alias,
@@ -1472,6 +1472,35 @@ Widget getOnline(double rightPadding, bool online) {
           padding: EdgeInsets.fromLTRB(0, 4, rightPadding, 4),
           child: CircleAvatar(
               radius: 3, backgroundColor: online ? Colors.green : kColorWarn)));
+}
+
+/// 控制端醒目在线/离线文字标签：圆点 + “在线/离线”中文文字。
+/// 在线=红，离线=黑（按定制要求）。
+Widget getOnlineLabel(bool online) {
+  final color = online ? Colors.red : Colors.black;
+  return Padding(
+    padding: const EdgeInsets.only(right: 6),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Tooltip(
+          message: online ? '在线' : '离线',
+          waitDuration: const Duration(seconds: 1),
+          child: CircleAvatar(radius: 4, backgroundColor: color),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          online ? '在线' : '离线',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: color,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 Widget build_more(BuildContext context, {bool invert = false}) {
