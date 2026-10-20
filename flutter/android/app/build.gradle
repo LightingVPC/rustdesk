@@ -32,6 +32,9 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// Application name supplied by GitHub Actions (or the local build environment).
+def rsAppName = System.getenv("RS_APP_NAME")?.trim() ?: "RustDesk"
+
 // Add rustls-platform-verifier Android support
 String findRustlsPlatformVerifierMavenDir() {
     def dependencyText = providers.exec {
@@ -104,6 +107,8 @@ android {
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue "string", "app_name", rsAppName
+        resValue "string", "input_service_name", "${rsAppName} Input"
     }
 
     signingConfigs {
