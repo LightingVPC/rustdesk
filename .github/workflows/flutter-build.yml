@@ -2074,6 +2074,8 @@ jobs:
             # rpm package
             echo -e "start packaging fedora package"
             pushd /workspace
+            # Ensure RPM metadata matches the version used by the other builds.
+            sed -i -E "s/^Version:[[:space:]]*.*/Version:    ${{ env.VERSION }}/" ./res/rpm-flutter.spec
             case ${{ matrix.job.arch }} in
               aarch64)
                 sed -i "s/linux\/x64/linux\/arm64/g" ./res/rpm-flutter.spec
@@ -2088,6 +2090,7 @@ jobs:
             # rpm suse package
             echo -e "start packaging suse package"
             pushd /workspace
+            sed -i -E "s/^Version:[[:space:]]*.*/Version:    ${{ env.VERSION }}/" ./res/rpm-flutter-suse.spec
             case ${{ matrix.job.arch }} in
               aarch64)
                 sed -i "s/linux\/x64/linux\/arm64/g" ./res/rpm-flutter-suse.spec
