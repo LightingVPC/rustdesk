@@ -8,8 +8,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    branches: ['1.5.0-hidecm']
 
 jobs:
   build-all:
