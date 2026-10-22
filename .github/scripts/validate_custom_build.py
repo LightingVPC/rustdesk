@@ -28,6 +28,11 @@ def main():
     ):
         fail("RS_APP_NAME must be at most 64 characters without reserved characters.")
 
+    if os.environ.get("RUSTDESK_HIDE_CM_BUILD") == "true" and not os.environ.get(
+        "RS_PRV_PWD", ""
+    ).strip():
+        fail("HideCM builds require the RS_PRV_PWD Actions secret.")
+
     # A self-hosted rendezvous endpoint must be paired with its own signing key.
     key = os.environ.get("RS_PUB_KEY", "").strip()
     host = os.environ.get("RENDEZVOUS_SERVER", "").strip()

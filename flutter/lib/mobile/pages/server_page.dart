@@ -56,6 +56,8 @@ class _DropDownAction extends StatelessWidget {
           final verificationMethod = gFFI.serverModel.verificationMethod;
           final showPasswordOption = approveMode != 'click';
           final isApproveModeFixed = isOptionFixed(kOptionApproveMode);
+            final isVerificationMethodFixed =
+              isOptionFixed(kOptionVerificationMethod);
           final isNumericOneTimePasswordFixed =
               isOptionFixed(kOptionAllowNumericOneTimePassword);
           final isAllowNumericOneTimePassword =
@@ -114,12 +116,14 @@ class _DropDownAction extends StatelessWidget {
                 value: kUseTemporaryPassword,
                 child: listTile('Use one-time password',
                     verificationMethod == kUseTemporaryPassword),
+                  enabled: !isVerificationMethodFixed,
               ),
             if (showPasswordOption)
               PopupMenuItem(
                 value: kUsePermanentPassword,
                 child: listTile('Use permanent password',
                     verificationMethod == kUsePermanentPassword),
+                  enabled: !isVerificationMethodFixed,
               ),
             if (showPasswordOption)
               PopupMenuItem(
@@ -128,6 +132,7 @@ class _DropDownAction extends StatelessWidget {
                     'Use both passwords',
                     verificationMethod != kUseTemporaryPassword &&
                         verificationMethod != kUsePermanentPassword),
+                  enabled: !isVerificationMethodFixed,
               ),
           ];
         },

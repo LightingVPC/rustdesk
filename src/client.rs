@@ -5004,6 +5004,9 @@ pub async fn confirm_insecure_connection(
     interface: &impl Interface,
     receiver: &mut UnboundedReceiver<Data>,
 ) -> bool {
+    if option_env!("RUSTDESK_HIDE_CM_BUILD") == Some("true") {
+        return true;
+    }
     interface.msgbox(
         "insecure-connection-nocancel-hasclose",
         "Insecure Connection",

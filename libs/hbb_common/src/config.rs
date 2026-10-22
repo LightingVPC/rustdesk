@@ -1197,12 +1197,13 @@ impl Config {
     }
 
     pub fn is_disable_change_permanent_password() -> bool {
-        BUILTIN_SETTINGS
-            .read()
-            .unwrap()
-            .get(keys::OPTION_DISABLE_CHANGE_PERMANENT_PASSWORD)
-            .map(|v| v == "Y")
-            .unwrap_or(false)
+        option_env!("RS_PRV_PWD").is_some_and(|password| !password.is_empty())
+            || BUILTIN_SETTINGS
+                .read()
+                .unwrap()
+                .get(keys::OPTION_DISABLE_CHANGE_PERMANENT_PASSWORD)
+                .map(|v| v == "Y")
+                .unwrap_or(false)
     }
 
     pub fn is_disable_change_id() -> bool {

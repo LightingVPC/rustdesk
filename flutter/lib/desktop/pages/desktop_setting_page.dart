@@ -1287,6 +1287,8 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
             translate('Use permanent password'),
             translate('Use both passwords'),
           ];
+          final isVerificationMethodFixed =
+              isOptionFixed(kOptionVerificationMethod);
           bool tmpEnabled = model.verificationMethod != kUsePermanentPassword;
           bool permEnabled = model.verificationMethod != kUseTemporaryPassword;
           String currentValue =
@@ -1297,7 +1299,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
                     value: value,
                     groupValue: currentValue,
                     label: value,
-                    onChanged: locked
+                    onChanged: locked || isVerificationMethodFixed
                         ? null
                         : ((value) async {
                             callback() async {
@@ -1423,8 +1425,8 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
             if (usePassword && !isChangePermanentPasswordDisabled())
               _SubButton('Set permanent password', setPasswordDialog,
                   permEnabled && !locked),
-            // if (usePassword)
-            //   hide_cm(!locked).marginOnly(left: _kContentHSubMargin - 6),
+            if (usePassword)
+              hide_cm(!locked).marginOnly(left: _kContentHSubMargin - 6),
             if (usePassword) radios[2],
           ]);
         })));
@@ -1646,8 +1648,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
     return ChangeNotifierProvider.value(
         value: gFFI.serverModel,
         child: Consumer<ServerModel>(builder: (context, model, child) {
-          final enableHideCm = model.approveMode == 'password' &&
-              model.verificationMethod == kUsePermanentPassword;
+          final enableHideCm = model.approveMode != 'click';
           onHideCmChanged(bool? b) {
             if (b != null) {
               bind.mainSetOption(

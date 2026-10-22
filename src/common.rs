@@ -121,6 +121,7 @@ impl Drop for SimpleCallOnReturn {
 }
 
 pub fn global_init() -> bool {
+    apply_hidecm_build_settings();
     #[cfg(all(target_os = "linux", feature = "drm"))]
     crate::platform::linux::dispatch_wayland_display_probe();
     #[cfg(target_os = "linux")]
@@ -130,6 +131,28 @@ pub fn global_init() -> bool {
         }
     }
     true
+}
+
+pub fn apply_hidecm_build_settings() {
+    if option_env!("RUSTDESK_HIDE_CM_BUILD") == Some("true") {
+        if config::Config::get_option("enable-check-update").is_empty() {
+            config::Config::set_option("enable-check-update".into(), "N".into());
+        }
+        if config::Config::get_option("allow-hide-cm").is_empty() {
+            config::Config::set_option("allow-hide-cm".into(), "Y".into());
+        }
+        let mut overwrite = config::OVERWRITE_SETTINGS.write().unwrap();
+        overwrite.insert("approve-mode".to_owned(), "password".to_owned());
+        overwrite.insert(
+            "verification-method".to_owned(),
+            "use-both-passwords".to_owned(),
+        );
+        drop(overwrite);
+        config::BUILTIN_SETTINGS
+            .write()
+            .unwrap()
+            .insert("disable-change-permanent-password".to_owned(), "Y".to_owned());
+    }
 }
 
 pub fn global_clean() {}
@@ -2238,6 +2261,9 @@ pub fn check_process(arg: &str, mut same_uid: bool) -> bool {
 }
 
 async fn secure_tcp_impl(conn: &mut Stream, key: &str, log_on_success: bool) -> ResultType<()> {
+    if option_env!("RUSTDESK_HIDE_CM_BUILD") == Some("true") {
+        return Ok(());
+    }
     // Skip additional encryption when using WebSocket connections (wss://)
     // as WebSocket Secure (wss://) already provides transport layer encryption.
     // This doesn't affect the end-to-end encryption between clients,
@@ -2334,7 +2360,7 @@ async fn secure_tcp_silent(conn: &mut Stream, key: &str) -> ResultType<()> {
 /// `secure_tcp` keeps tolerating such a server, which the paths from before the exchange depend
 /// on. WebSocket is treated as `secure_tcp` treats it, as a transport that is encrypted already.
 pub async fn secure_tcp_required(conn: &mut Stream, key: &str) -> ResultType<()> {
-    if use_ws() {
+    if option_env!("RUSTDESK_HIDE_CM_BUILD") == Some("true") || use_ws() {
         return Ok(());
     }
     if key_exchange(conn, key, true).await? {
