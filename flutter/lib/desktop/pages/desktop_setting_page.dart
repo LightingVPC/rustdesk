@@ -1207,6 +1207,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
           break;
       }
 
+      final accessModeFixed = isOptionFixed(kOptionAccessMode);
       return _Card(title: 'Permissions', children: [
         ComboBox(
             keys: [
@@ -1219,7 +1220,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
               translate('Full Access'),
               translate('Screen Share'),
             ],
-            enabled: enabled && !isOptionFixed(kOptionAccessMode),
+            enabled: enabled && !accessModeFixed,
             initialKey: initialKey,
             onChanged: (mode) async {
               await bind.mainSetOption(key: kOptionAccessMode, value: mode);
@@ -1229,42 +1230,42 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
           children: [
             _OptionCheckBox(
                 context, 'Enable keyboard/mouse', kOptionEnableKeyboard,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             if (isWindows)
               _OptionCheckBox(
                   context, 'Enable remote printer', kOptionEnableRemotePrinter,
-                  enabled: enabled, fakeValue: fakeValue),
+                  enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(context, 'Enable clipboard', kOptionEnableClipboard,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(
                 context, 'Enable file transfer', kOptionEnableFileTransfer,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(context, 'Enable audio', kOptionEnableAudio,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(context, 'Enable camera', kOptionEnableCamera,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(context, 'Enable terminal', kOptionEnableTerminal,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(
                 context, 'Enable TCP tunneling', kOptionEnableTunnel,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(
                 context, 'Enable remote restart', kOptionEnableRemoteRestart,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(
                 context, 'Enable recording session', kOptionEnableRecordSession,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             if (isWindows)
               _OptionCheckBox(context, 'Enable blocking user input',
                   kOptionEnableBlockInput,
-                  enabled: enabled, fakeValue: fakeValue),
+                  enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             if (bind.mainSupportedPrivacyModeImpls() != '[]')
               _OptionCheckBox(
                   context, 'Enable privacy mode', kOptionEnablePrivacyMode,
-                  enabled: enabled, fakeValue: fakeValue),
+                  enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
             _OptionCheckBox(context, 'Enable remote configuration modification',
                 kOptionAllowRemoteConfigModification,
-                enabled: enabled, fakeValue: fakeValue),
+                enabled: enabled && !accessModeFixed, fakeValue: fakeValue),
           ],
         ),
       ]);
@@ -1827,6 +1828,7 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
       required String title,
       VoidCallback? onTap,
       Widget? trailing,
+      bool enabled = true,
       bool showTooltip = false,
       String tooltipMessage = '',
     }) {
@@ -1865,8 +1867,8 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
       return ListTile(
         leading: Icon(icon, color: _accentColor),
         title: titleWidget,
-        enabled: !locked,
-        onTap: onTap,
+        enabled: enabled && !locked,
+        onTap: enabled && !locked ? onTap : null,
         trailing: trailing,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -1910,6 +1912,7 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
                   icon: Icons.dns_outlined,
                   title: 'ID/Relay Server',
                   onTap: () => showServerSettings(gFFI.dialogManager, setState),
+                  enabled: !isOptionFixed('custom-rendezvous-server'),
                 ),
               if (!hideProxy && !hideServer) divider,
               if (!hideProxy)
