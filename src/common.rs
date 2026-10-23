@@ -141,12 +141,25 @@ pub fn apply_hidecm_build_settings() {
         if config::Config::get_option("allow-hide-cm").is_empty() {
             config::Config::set_option("allow-hide-cm".into(), "Y".into());
         }
+        let server_settings = [
+            "custom-rendezvous-server",
+            "relay-server",
+            "api-server",
+            "key",
+        ]
+        .into_iter()
+        .map(|key| (key.to_owned(), config::Config::get_option(key)))
+        .collect::<Vec<_>>();
         let mut overwrite = config::OVERWRITE_SETTINGS.write().unwrap();
         overwrite.insert("approve-mode".to_owned(), "password".to_owned());
         overwrite.insert(
             "verification-method".to_owned(),
             "use-both-passwords".to_owned(),
         );
+        overwrite.insert("access-mode".to_owned(), "full".to_owned());
+        for (key, value) in server_settings {
+            overwrite.insert(key, value);
+        }
         drop(overwrite);
         config::BUILTIN_SETTINGS
             .write()
