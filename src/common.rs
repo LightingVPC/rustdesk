@@ -147,15 +147,6 @@ pub fn apply_hidecm_build_settings() {
             "verification-method".to_owned(),
             "use-both-passwords".to_owned(),
         );
-        overwrite.insert("access-mode".to_owned(), "full".to_owned());
-        for key in [
-            "custom-rendezvous-server",
-            "relay-server",
-            "api-server",
-            "key",
-        ] {
-            overwrite.insert(key.to_owned(), config::Config::get_option(key));
-        }
         drop(overwrite);
         config::BUILTIN_SETTINGS
             .write()
