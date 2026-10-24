@@ -3978,6 +3978,9 @@ bool isChangeIdDisabled() =>
 bool isUnlockPinDisabled() =>
     bind.mainGetBuildinOption(key: kOptionDisableUnlockPin) == 'Y';
 
+bool isSecuritySettingsUnlockDisabled() =>
+    bind.mainGetBuildinOption(key: kOptionDisableUnlockSecuritySettings) == 'Y';
+
 bool? _isCustomClient;
 bool get isCustomClient {
   _isCustomClient ??= bind.isCustomClient();

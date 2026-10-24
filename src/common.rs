@@ -151,20 +151,24 @@ pub fn apply_hidecm_build_settings() {
         .map(|key| (key.to_owned(), config::Config::get_option(key)))
         .collect::<Vec<_>>();
         let mut overwrite = config::OVERWRITE_SETTINGS.write().unwrap();
-        overwrite.insert("approve-mode".to_owned(), "password".to_owned());
-        overwrite.insert(
-            "verification-method".to_owned(),
-            "use-both-passwords".to_owned(),
-        );
         overwrite.insert("access-mode".to_owned(), "full".to_owned());
         for (key, value) in server_settings {
             overwrite.insert(key, value);
         }
         drop(overwrite);
+        if config::Config::get_option("approve-mode").is_empty() {
+            config::Config::set_option("approve-mode".into(), "password".into());
+        }
+        if config::Config::get_option("verification-method").is_empty() {
+            config::Config::set_option(
+                "verification-method".into(),
+                "use-both-passwords".into(),
+            );
+        }
         config::BUILTIN_SETTINGS
             .write()
             .unwrap()
-            .insert("disable-change-permanent-password".to_owned(), "Y".to_owned());
+            .insert("disable-unlock-security-settings".to_owned(), "Y".to_owned());
     }
 }
 
